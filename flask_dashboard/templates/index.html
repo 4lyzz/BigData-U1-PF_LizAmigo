@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard de Grupos de K-Pop</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="hero">
+    <h1>Dashboard de Grupos de K-Pop</h1>
+    <p>Exploración interactiva del dataset <code>kpopgroups.csv</code> (279 grupos)</p>
+  </header>
+
+  <main class="container">
+    <section class="card didactica">
+      <h2>¿Qué analiza este dashboard?</h2>
+      <p>
+        Este panel muestra los datos de grupos de K-Pop de forma organizada y explicada. El usuario puede filtrar por: género de los miembros del grupo, estado de actividad del grupo, agencia, nombre del fandom. También puede ordenar la lista de distintas formas(nombre, año de debut, número de miembros actuales, número de miembros originales, diferencia de miembros y agencia), así como ordenarlo en sentido ascendente o descendente. Además, puede elegir el nivel de detalle de las fichas entre compacto y detallado.
+      </p>
+    </section>
+
+    <section class="kpis">
+      <div class="kpi">
+        <span class="kpi-num">{{ resumen.total }}</span>
+        <span class="kpi-label">Grupos mostrados</span>
+      </div>
+      <div class="kpi">
+        <span class="kpi-num">{{ resumen.activos }}</span>
+        <span class="kpi-label">Grupos activos</span>
+      </div>
+      <div class="kpi">
+        <span class="kpi-num">{{ resumen.media_miembros }}</span>
+        <span class="kpi-label">Media de miembros actuales</span>
+      </div>
+      <div class="kpi">
+        <span class="kpi-num">{{ resumen.con_cambios }}</span>
+        <span class="kpi-label">Grupos con cambios de miembros</span>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Filtrar, ordenar y ajustar detalle</h2>
+      <form method="GET" action="{{ url_for('index') }}" class="filtros-grid">
+        <label>
+          Buscar (nombre internacional, nombre coreano, agencia o fandom)
+          <input type="text" name="buscar" value="{{ filtros.buscar }}" placeholder="Ej: BTS, SM, Bunnies...">
+        </label>
+
+        <label>
+          Género
+          <select name="genero">
+            <option value="">Todos</option>
+            {% for g in opciones.generos %}
+              <option value="{{ g }}" {% if filtros.genero == g %}selected{% endif %}>{{ g }}</option>
+            {% endfor %}
+          </select>
+        </label>
+
+        <label>
+          Estado
+          <select name="estado">
+            <option value="">Todos</option>
+            {% for e in opciones.estados %}
+              <option value="{{ e }}" {% if filtros.estado == e %}selected{% endif %}>{{ e }}</option>
+            {% endfor %}
+          </select>
+        </label>
+
+        <label>
+          Agencia
+          <select name="empresa">
+            <option value="">Todas</option>
+            {% for emp in opciones.empresas %}
+              <option value="{{ emp }}" {% if filtros.empresa == emp %}selected{% endif %}>{{ emp }}</option>
+            {% endfor %}
+          </select>
+        </label>
+
+        <label>
+          Ordenar por
+          <select name="ordenar_por">
+            <option value="Name" {% if filtros.ordenar_por == 'Name' %}selected{% endif %}>Nombre</option>
+            <option value="Debut_Year" {% if filtros.ordenar_por == 'Debut_Year' %}selected{% endif %}>Año de debut</option>
+            <option value="Members" {% if filtros.ordenar_por == 'Members' %}selected{% endif %}>Miembros actuales</option>
+            <option value="Orig Memb" {% if filtros.ordenar_por == 'Orig Memb' %}selected{% endif %}>Miembros originales</option>
+            <option value="Cambio_Miembros" {% if filtros.ordenar_por == 'Cambio_Miembros' %}selected{% endif %}>Diferencia de miembros</option>
+            <option value="Company" {% if filtros.ordenar_por == 'Company' %}selected{% endif %}>Agencia</option>
+          </select>
+        </label>
+
+        <label>
+          Sentido
+          <select name="orden">
+            <option value="asc" {% if filtros.orden == 'asc' %}selected{% endif %}>Ascendente</option>
+            <option value="desc" {% if filtros.orden == 'desc' %}selected{% endif %}>Descendente</option>
+          </select>
+        </label>
+
+        <label>
+          Nivel de detalle de las fichas
+          <select name="detalle">
+            <option value="compacto" {% if filtros.detalle == 'compacto' %}selected{% endif %}>Compacto</option>
+            <option value="detallado" {% if filtros.detalle == 'detallado' %}selected{% endif %}>Detallado</option>
+          </select>
+        </label>
+
+        <div class="acciones">
+          <button type="submit">Aplicar</button>
+          <a href="{{ url_for('index') }}" class="btn-limpiar">Limpiar</a>
+        </div>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>Visualizaciones clave</h2>
+      <p class="explicacion-grafico">
+        <strong>¿Qué nos cuentan estos gráficos?</strong> Ayudan a ver qué agencias concentran más grupos, cuántos siguen activos y cuál es el tamaño más habitual de los grupos respecto a sus miembros.
+      </p>
+
+      {% if graficos %}
+        <div class="graficos-grid">
+          <div class="grafico-box">
+            <img src="{{ url_for('static', filename=graficos.top_empresas) }}" alt="Top agencias">
+            <p>Agencias con mayor número de grupos en la selección actual.</p>
+          </div>
+          <div class="grafico-box">
+            <img src="{{ url_for('static', filename=graficos.estados) }}" alt="Estado de grupos">
+            <p>Reparto de grupos según su estado (Activo, Inactivo, Hiatus).</p>
+          </div>
+          <div class="grafico-box">
+            <img src="{{ url_for('static', filename=graficos.miembros) }}" alt="Miembros actuales">
+            <p>Cantidad de grupos según el número actual de integrantes.</p>
+          </div>
+        </div>
+      {% else %}
+        <p>No hay datos con los filtros actuales para dibujar ningún gráfico.</p>
+      {% endif %}
+    </section>
+
+    <section class="card">
+      <h2>Grupos encontrados ({{ grupos|length }})</h2>
+      <div class="cards-grid">
+        {% for g in grupos %}
+          <article class="grupo-card {% if g.Name|lower == 'billlie' %}billlie-card{% endif %}">
+            <div class="grupo-top">
+              <h3>{{ g.Name }} <span class="korean">({{ g['Korean Name'] }})</span></h3>
+              <span class="badge">{{ g.Active }}</span>
+            </div>
+            <p><strong>Agencia:</strong> {{ g.Company }} · <strong>Género:</strong> {{ g.Gender }}</p>
+            <p><strong>Fandom:</strong> {{ g['Fanclub Name'] }}</p>
+            <p><strong>Miembros actuales:</strong> {{ g.Members }} (Originales: {{ g['Orig Memb'] }})</p>
+
+            {% if filtros.detalle == 'detallado' %}
+              <hr>
+              <p><strong>Abreviatura:</strong> {{ g.Short }}</p>
+              <p><strong>Fecha de debut:</strong> {{ g.Debut }}</p>
+              <p><strong>Variación de miembros:</strong> {{ g.Cambio_Miembros }}</p>
+            {% endif %}
+          </article>
+        {% endfor %}
+      </div>
+    </section>
+  </main>
+</body>
+</html>
