@@ -1,1 +1,2 @@
 # BigData-U1-PF_LizAmigo
+Este panel muestra los datos de grupos de K-Pop de forma organizada y explicada. El usuario puede filtrar por: género de los miembros del grupo, estado de actividad del grupo, agencia, nombre del fandom. También puede ordenar la lista de distintas formas(nombre, año de debut, número de miembros actuales, número de miembros originales, diferencia de miembros y agencia), así como ordenarlo en sentido ascendente o descendente. Además, puede elegir el nivel de detalle de las fichas entre compacto y detallado.
