@@ -1,2 +1,5 @@
 # BigData-U1-PF_LizAmigo
-Este panel muestra los datos de grupos de K-Pop de forma organizada y explicada. El usuario puede filtrar por: género de los miembros del grupo, estado de actividad del grupo, agencia, nombre del fandom. También puede ordenar la lista de distintas formas(nombre, año de debut, número de miembros actuales, número de miembros originales, diferencia de miembros y agencia), así como ordenarlo en sentido ascendente o descendente. Además, puede elegir el nivel de detalle de las fichas entre compacto y detallado.
+Link PythonAnywhere: https://4lyzz.pythonanywhere.com/
+
+Que ha hecho que funcione en PythonAnywhere||Que diferencia hay sobre el codigo de versión local:
+En local, el csv funcionaba porque estaba dentro de la carpeta del proyecto, mientras que en PythonAnywhere, como el servidor arranca desde otra carpeta distinta y por tanto no funcionaba. Al añadir BASE_DIR como ruta completa donde vive cada archivo, el programa logra leer el csv.
